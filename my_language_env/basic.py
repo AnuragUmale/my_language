@@ -26,7 +26,7 @@ TOKEN_TYPE_LEFT_PAREN = "LEFT_PAREN"
 TOKEN_TYPE_RIGHT_PAREN = "RIGHT_PAREN"
 
 class Token:
-    def __init__(self,type_,value):
+    def __init__(self,type_,value=None):
         self.type = type_
         self.value = value
     
@@ -88,6 +88,7 @@ class Lexer:
                 number_string += '.'
             else:
                 number_string += self.current_character
+            self.advance()
         if dot_count == 0:
             return Token(TOKEN_TYPE_INT,int(number_string))
         else:
