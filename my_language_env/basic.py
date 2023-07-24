@@ -92,3 +92,10 @@ class Lexer:
             return Token(TOKEN_TYPE_INT,int(number_string))
         else:
             return Token(TOKEN_TYPE_FLOAT,float(number_string))
+
+
+def run(text):
+    lexer = Lexer(text)
+    tokens, error = lexer.make_tokens()
+
+    return tokens, error
