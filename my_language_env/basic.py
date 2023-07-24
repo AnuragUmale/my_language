@@ -1,3 +1,21 @@
+DIGITS = '0123456789'
+
+
+class Error:
+    def __init__(self, error_name,details):
+        self.error_name = error_name
+        self.details = details 
+    
+    def as_string(self):
+        result = f'{self.error_name}:{self.details}'
+        return result
+
+class IllegalCharError(Error):
+    def __init__(self,details):
+        super().__init__('Illegal Character', details)
+
+
+
 TOKEN_TYPE_ADD = "ADD"
 TOKEN_TYPE_SUB = "SUB"
 TOKEN_TYPE_MUL = "MUL"
@@ -30,10 +48,11 @@ class Lexer:
     
     def make_tokens(self):
         tokens = []
-
         while self.current_character != None:
             if self.current_character in ' \t':
                 self.advance()
+            elif self.current_character in DIGITS:
+                tokens.append(self.make_numbers())
             elif self.current_character == '+':
                 tokens.append(Token(TOKEN_TYPE_ADD))
                 self.advance()
@@ -52,4 +71,24 @@ class Lexer:
             elif self.current_character == ')':
                 tokens.append(Token(TOKEN_TYPE_RIGHT_PAREN))
                 self.advance()
-        return tokens
+            else:
+                character = self.current_character
+                self.advance()
+                return [], IllegalCharError("'"+character+"'")
+        return tokens , None
+
+    def make_numbers(self):
+        number_string = ""
+        dot_count = 0
+
+        while self.current_character != None and self.current_character in DIGITS + '.':
+            if self.current_character == '.':
+                if dot_count == 1: break
+                dot_count += 1
+                number_string += '.'
+            else:
+                number_string += self.current_character
+        if dot_count == 0:
+            return Token(TOKEN_TYPE_INT,int(number_string))
+        else:
+            return Token(TOKEN_TYPE_FLOAT,float(number_string))
